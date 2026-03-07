@@ -41,8 +41,6 @@
 					<form asp-controller="Comments" asp-action="Create" method="post">
 						<input type="hidden" name="PostId" value="@Model.ID" />
 						<div class="mb-3">
-							<label class="form-label">Your Name</label>
-							<input type="text" name="User" class="form-control" required />
 							<label class="form-label">Comment</label>
 							<textarea name="UserComments" class="form-control" required></textarea>
 						</div>

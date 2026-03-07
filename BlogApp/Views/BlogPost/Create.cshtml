@@ -2,8 +2,10 @@
 @{
 	ViewData["Title"] = "Create a New Blog Post";
 }
+<div class="titleContainer">
+	<h1 class="mb-4">Create Blog Post</h1>
+</div>
 
-<h2>Create Blog Post</h2>
 
 <form asp-action="Create" method="post">
 	<div action="mb-3">
@@ -18,11 +20,11 @@
 		<span asp-validation-for="Content" class="text-danger"></span>
 	</div>
 
-	<div action="mb-3">
+	@* <div action="mb-3">
 		<label asp-for="PublishedDate" class="form-label">Published Date</label>
-		<input asp-for="PublishedDate" type="date" class="form-control" />
-		<span asp-validation-for="PublishedDate" class="text-danger"></span>
-	</div>
+		<input asp-for="PublishedDate" type="date" class="form-control"/>
+		<span asp-validation-for="PublishedDate" class="text-danger" ></span>
+	</div> *@
 
 	<button type="submit" class="btn btn-success">Save Post</button>
 </form>

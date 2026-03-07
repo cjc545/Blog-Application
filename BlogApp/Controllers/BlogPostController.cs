@@ -21,6 +21,7 @@ namespace BlogApp.Controllers
 
             var blogPost = await _context.BlogPosts
                 .Include(p => p.User)
+                .OrderByDescending(p => p.ID)
                 .ToListAsync();
 
             return View(blogPost);
@@ -57,6 +58,7 @@ namespace BlogApp.Controllers
 
             if (ModelState.IsValid)
             {
+                BlogDetails.PublishedDate = DateTime.UtcNow;
                 _context.Add(BlogDetails);
                 await _context.SaveChangesAsync();
 
@@ -69,6 +71,11 @@ namespace BlogApp.Controllers
 
         public async Task<IActionResult> Details(int Id, string returnUrl = null)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var blogDetails = await _context.BlogPosts
                 .Include(p => p.User)
                 .Include(p => p.Comments)
@@ -141,6 +148,7 @@ namespace BlogApp.Controllers
             {
                 return NotFound();
             }
+
 
             _context.BlogPosts.Remove(blogDetails);
             await _context.SaveChangesAsync();

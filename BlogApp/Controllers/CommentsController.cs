@@ -21,7 +21,7 @@ namespace BlogApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int PostId, string User, string UserComments)
         {
-            if (string.IsNullOrWhiteSpace(User) || string.IsNullOrWhiteSpace(UserComments))
+            if (string.IsNullOrWhiteSpace(UserComments))
             {
                 TempData["Error"] = "Name and Comments cannot be Empty";
                 return RedirectToAction("Details", "Post", new { Id = PostId });
@@ -30,7 +30,7 @@ namespace BlogApp.Controllers
             var comment = new Comments
             {
                 PostId = PostId,
-                Author = User,
+                Author = HttpContext.Session.GetString("UserName"),
                 Content = UserComments,
                 CreateAt = DateTime.UtcNow
 

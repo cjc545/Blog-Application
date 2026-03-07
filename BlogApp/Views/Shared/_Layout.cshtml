@@ -13,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BlogApp</a>
+                <a class="navbar-brand fw-bold" style="color: red" asp-area="" asp-controller="Home" asp-action="Index">The Internet Is Not Dead</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -37,7 +37,7 @@
                             <li class="nav-item">
                                 <span class="nav-link fw-bold text-black">Welcome, @Context.Session.GetString("UserName")</span>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item logoutContainer">
                                 <form asp-action="Logout" asp-controller="Account" method="post" class="d-inline">
                                     <button type="submit" class="btn btn-danger btn-sm">Logout</button>
                                 </form>
