@@ -1,0 +1,38 @@
+﻿@model BlogPost
+
+@{
+	ViewData["Title"] = "Create a New Blog Post";
+}
+
+<h2>Create Blog Post</h2>
+
+<form asp-action="Edit" method="post">
+	<input type="hidden" asp-for="ID" />
+
+	<div action="mb-3">
+		<label asp-for="Title" class="form-label">Title</label>
+		<input asp-for="Title" class="form-control" />
+		<span asp-validation-for="Title" class="text-danger"></span>
+	</div>
+
+	<div action="mb-3">
+		<label asp-for="Content" class="form-label">Content</label>
+		<textarea asp-for="Content" class="form-control" rows="5"></textarea>
+		<span asp-validation-for="Content" class="text-danger"></span>
+	</div>
+
+	<div action="mb-3">
+		<label asp-for="PublishedDate" class="form-label">Published Date</label>
+		<input asp-for="PublishedDate" type="date" class="form-control" />
+		<span asp-validation-for="PublishedDate" class="text-danger"></span>
+	</div>
+
+	<button type="submit" class="btn btn-success">Save Post</button>
+	<a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

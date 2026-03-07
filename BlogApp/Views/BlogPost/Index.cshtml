@@ -1,0 +1,28 @@
+﻿@model IEnumerable<BlogPost>
+
+<a asp-action="Create" class="btn btn-primary">Create New Post</a>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Name</th>
+			<th>Created At</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@item.Title</td>
+				<td>@item.User.Name.ToString()</td>
+				<td>@item.PublishedDate.ToString("yyy-MM-dd")</td>
+				<td>
+					<a asp-action="Details" asp-route-id="@item.ID" asp-route-returnUrl="@Url.Action("Index", "BlogPost")">Details</a>
+					<a asp-action="Edit" asp-route-id="@item.ID">Edit</a>
+					<a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
