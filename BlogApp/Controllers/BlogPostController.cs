@@ -157,7 +157,7 @@ namespace BlogApp.Controllers
 
             var postOwner = await _context.Users.FirstOrDefaultAsync(u => u.ID == blogDetails.UserId);
 
-            if (HttpContext.Session.GetString("UserName") != postOwner.Name )
+            if (HttpContext.Session.GetString("UserName") != postOwner.Name)
             {
                 TempData["BlogListError"] = "Can't Delete a post that isn't yours! That would be really rude!";
                 return RedirectToAction(nameof(Index));
