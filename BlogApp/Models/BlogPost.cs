@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogApp.Models
 {
@@ -18,6 +19,10 @@ namespace BlogApp.Models
         [DataType(DataType.Date)]
         [CustomValidation(typeof(BlogPost), nameof(ValidatePublishedDate))]
         public DateTime PublishedDate { get; set; } = DateTime.UtcNow;
+        public string? ImagePath { get; set; }
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
 
         // Foreign Key
         public int UserId { get; set; }

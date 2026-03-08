@@ -16,6 +16,7 @@ namespace BlogApp.Controllers
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
             {
+                TempData["BlogListError"] = "If you want to view our posts, you have to login first!";
                 return RedirectToAction("Login", "Account");
             }
 
@@ -31,6 +32,7 @@ namespace BlogApp.Controllers
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
             {
+                TempData["BlogListError"] = "If you want to create a post, you have to login first!";
                 return RedirectToAction("Login", "Account");
             }
             return View();
@@ -50,6 +52,7 @@ namespace BlogApp.Controllers
             //get user login details
             string userEmail = HttpContext.Session.GetString("UserEmail");
             var userDetails = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            var content = HttpContext.Session.GetString("#contentInput");
 
             BlogDetails.UserId = userDetails.ID;
 
@@ -73,6 +76,7 @@ namespace BlogApp.Controllers
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
             {
+                TempData["BlogListError"] = "If you want to view our posts, you have to login first!";
                 return RedirectToAction("Login", "Account");
             }
 
@@ -95,6 +99,13 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> Edit(int Id)
         {
             var blogDetails = await _context.BlogPosts.FindAsync(Id);
+            var postOwner = await _context.Users.FirstOrDefaultAsync(u => u.ID == blogDetails.UserId);
+
+            if (HttpContext.Session.GetString("UserName") != postOwner.Name)
+            {
+                TempData["BlogListError"] = "Can't Edit post that isn't yours! That would be rude!";
+                return RedirectToAction(nameof(Index));
+            }
 
             if (blogDetails == null)
             {
@@ -132,6 +143,14 @@ namespace BlogApp.Controllers
             var blogDetails = await _context.BlogPosts
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(p => p.ID == Id);
+
+            var postOwner = await _context.Users.FirstOrDefaultAsync(u => u.ID == blogDetails.UserId);
+
+            if (HttpContext.Session.GetString("UserName") != postOwner.Name)
+            {
+                TempData["BlogListError"] = "Can't Delete a post that isn't yours! That would be really rude!";
+                return RedirectToAction(nameof(Index));
+            }
 
             if (blogDetails == null)
             {

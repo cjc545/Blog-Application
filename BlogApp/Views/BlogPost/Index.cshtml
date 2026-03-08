@@ -1,6 +1,13 @@
 ﻿@model IEnumerable<BlogPost>
 
-<a asp-action="Create" class="btn btn-primary">Create New Post</a>
+<a asp-action="Create" class="btn btn-primary mb-4">Create New Post</a>
+
+@if (TempData["BlogListError"] != null)
+{
+	<div class="alert alert-danger">
+		@TempData["BlogListError"]
+	</div>
+}
 <table class="table">
 	<thead>
 		<tr>

@@ -9,6 +9,13 @@
 		}
 	</div>
 }
+
+@if (TempData["BlogListError"] != null)
+{
+	<div class="alert alert-danger">
+		@TempData["BlogListError"]
+	</div>
+}
 <p></p>
 
 <form asp-action="Login" method="post">
