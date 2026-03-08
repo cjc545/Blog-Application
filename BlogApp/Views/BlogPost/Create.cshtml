@@ -9,6 +9,13 @@
 	<h1 class="mb-4">Create Blog Post</h1>
 </div>
 
+@if (TempData["BlogPostError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["BlogPostError"]
+    </div>
+}
+
 
 <form asp-action="Create" method="post">
 	<div action="mb-3">
@@ -89,39 +96,72 @@
                 const html = quill.root.innerHTML;
                 document.getElementById("contentInput").value = html;
 
+                // if(quill.getText().trim().length === 0){
+                //     e.preventDefault();
+                //     alert("Post content cannot be empty");
+                // }
+
             });
 
         });
 
         function imageHandler() {
-
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.click();
 
             input.onchange = async () => {
-
                 const file = input.files[0];
+                if (!file) return;
 
-                const formData = new FormData();
-                formData.append("image", file);
+                // Maximum width/height in pixels
+                const MAX_WIDTH = 1024;
+                const MAX_HEIGHT = 1024;
 
-                const response = await fetch('/Image/Upload', {
-                    method: 'POST',
-                    body: formData
-                });
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
 
-                if (!response.ok) {
-                    console.error("Upload failed");
-                    return;
-                }
+                img.onload = async () => {
+                    let { width, height } = img;
+                    let newWidth = width;
+                    let newHeight = height;
 
-                const imageUrl = await response.text();
+                    // Calculate new dimensions while keeping aspect ratio
+                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+                        newWidth = width * ratio;
+                        newHeight = height * ratio;
+                    }
 
-                const range = quill.getSelection();
-                quill.insertEmbed(range.index, 'image', imageUrl);
+                    // Draw resized image onto canvas
+                    const canvas = document.createElement('canvas');
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
+                    // Convert canvas to blob (compressed image)
+                    canvas.toBlob(async (blob) => {
+                        const formData = new FormData();
+                        formData.append('image', blob, file.name);
+
+                        const response = await fetch('/Image/Upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            console.error("Upload failed");
+                            return;
+                        }
+
+                        const imageUrl = await response.text();
+                        const range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', imageUrl);
+
+                    }, file.type, 0.8); // quality 0.8 for JPEG/PNG
+                };
             };
         }
 

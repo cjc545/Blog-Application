@@ -46,8 +46,19 @@ namespace BlogApp.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
+            var characterCheck = ContentCharacterCount(BlogDetails.Content);
 
-            //BlogDetails.UserId = 1;
+            if (BlogDetails.Content == "<p><br></p>")
+            {
+                TempData["BlogPostError"] = "Your post needs content dude!!!";
+                return View(BlogDetails);
+            }
+
+            if (characterCheck < 10)
+            {
+                TempData["BlogPostError"] = "Your post needs at least 10 characters";
+                return View(BlogDetails);
+            }
 
             //get user login details
             string userEmail = HttpContext.Session.GetString("UserEmail");
@@ -146,7 +157,7 @@ namespace BlogApp.Controllers
 
             var postOwner = await _context.Users.FirstOrDefaultAsync(u => u.ID == blogDetails.UserId);
 
-            if (HttpContext.Session.GetString("UserName") != postOwner.Name)
+            if (HttpContext.Session.GetString("UserName") != postOwner.Name )
             {
                 TempData["BlogListError"] = "Can't Delete a post that isn't yours! That would be really rude!";
                 return RedirectToAction(nameof(Index));
@@ -168,12 +179,53 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
+            // 1. Parse image URLs from Content
+            var htmlContent = blogDetails.Content ?? "";
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(htmlContent);
+
+            var imageNodes = doc.DocumentNode.SelectNodes("//img[@src]");
+            if (imageNodes != null)
+            {
+                foreach (var img in imageNodes)
+                {
+                    var src = img.GetAttributeValue("src", null);
+                    if (!string.IsNullOrEmpty(src) && src.StartsWith("/uploads/"))
+                    {
+                        // Convert URL to physical path
+                        var fileName = src.Substring("/uploads/".Length);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            try
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                            catch(Exception ex)
+                            {
+                                throw new ApplicationException(string.Format("Error occured deleteing image {0} from /uploads", fileName), ex);
+                            }
+                        }
+                    }
+                }
+            }
+
 
             _context.BlogPosts.Remove(blogDetails);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
 
+        }
+
+        private int ContentCharacterCount(string content)
+        {
+            content = content.Replace("<p>", "");
+            content = content.Replace("</p>", "");
+            content = content.Replace("<br>", "");
+
+            return content.Length;
         }
 
     }

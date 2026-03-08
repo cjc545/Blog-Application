@@ -19,7 +19,6 @@ namespace BlogApp.Models
         [DataType(DataType.Date)]
         [CustomValidation(typeof(BlogPost), nameof(ValidatePublishedDate))]
         public DateTime PublishedDate { get; set; } = DateTime.UtcNow;
-        public string? ImagePath { get; set; }
 
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
