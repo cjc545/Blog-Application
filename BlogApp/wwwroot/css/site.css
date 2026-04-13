@@ -52,3 +52,7 @@ body {
     display: flex;
     justify-content: center;
 }
+
+.ql-editor > * {
+    cursor: initial !important;
+}

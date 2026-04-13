@@ -133,13 +133,23 @@ namespace BlogApp.Controllers
             {
                 return NotFound();
             }
-            BlogDetails.UserId = 1;
+            var blogDetails = await _context.BlogPosts.FindAsync(Id);
+
+            if (blogDetails == null)
+            {
+                return NotFound();
+            }
+
+            blogDetails.Title = BlogDetails.Title;
+            blogDetails.Content = BlogDetails.Content;
+            blogDetails.PublishedDate = BlogDetails.PublishedDate;
+
             ModelState.Remove("User");
             ModelState.Remove("Comments");
 
             if(ModelState.IsValid)
             {
-                _context.Update(BlogDetails);
+                //_context.Update(BlogDetails);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
