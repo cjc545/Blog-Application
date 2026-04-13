@@ -11,8 +11,11 @@ To get this setup locally, you need to get the Microsoft SQL Database setup. To 
 1. Ensure Microsoft SQL Server is installed on your machine 
 2. Go to your cmd console, and type in the following:
 > sqllocaldb create "BLOG-SERVER"
+> 
 > sqllocaldb start "BLOG-SERVER"
+> 
 N.B. The default name for the server is BLOG-SERVER, but if you want to define a different name, you'll need to update the string in appsettings.json
+
 3. Go into the BlogApp project in VisualStudio, open the package manager console and type in the following:
 > update-database
 
