@@ -31,25 +31,6 @@
 		<span asp-validation-for="Content" class="text-danger"></span>
 	</div>
 
-	@* <div class="mb-3">
-		<label class="form-label">Content</label>
-		<div id="editor" class="form-control" contenteditable="true" style="min-height:200px;"></div>
-		<input type="hidden" asp-for="Content" id="contentInput" />
-		<span asp-validation-for="Content" class="text-danger"></span>
-	</div> *@
-
-	@* <div action="mb-3">
-		<label asp-for="Content" class="form-label">Content</label>
-		<textarea asp-for="Content" class="form-control" rows="5"></textarea>
-		<span asp-validation-for="Content" class="text-danger"></span>
-	</div> *@
-
-	@* <div action="mb-3">
-		<label asp-for="PublishedDate" class="form-label">Published Date</label>
-		<input asp-for="PublishedDate" type="date" class="form-control"/>
-		<span asp-validation-for="PublishedDate" class="text-danger" ></span>
-	</div> *@
-
 	<button type="submit" class="btn btn-success">Save Post</button>
 </form>
 
@@ -59,7 +40,7 @@
 	<partial name="_ValidationScriptsPartial" />
 
 	<script>
-
+        //This script initialises the Quilljs rich text editor.
         let quill;
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -89,23 +70,18 @@
                 quill.root.innerHTML = contentInput.value;
             }
 
-            // IMPORTANT: attach submit handler here
             const form = document.querySelector(".btn-success");
 
             form.addEventListener("click", function (e) {
 
                 const html = quill.root.innerHTML;
                 document.getElementById("contentInput").value = html;
-
-                // if(quill.getText().trim().length === 0){
-                //     e.preventDefault();
-                //     alert("Post content cannot be empty");
-                // }
-
             });
 
         });
 
+        //This function deals with uploaded images, setting max dimensions, and
+        //calling ImageController to store images locally.
         function imageHandler() {
             const input = document.createElement('input');
             input.type = 'file';
@@ -165,12 +141,5 @@
                 };
             };
         }
-
-
-		// document.querySelector("form").addEventListener("submit", function () {
-		// 	var html = quill.root.innerHTML;
-		// 	document.getElementById("contentInput").value = html;
-		// });
-
 	</script>
 }

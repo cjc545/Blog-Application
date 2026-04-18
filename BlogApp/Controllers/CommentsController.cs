@@ -8,15 +8,22 @@ namespace BlogApp.Controllers
     {
         private readonly BlogDbContext _context;
 
+        //Constructor (dependancy injection)
         public CommentsController(BlogDbContext context)
         {
             _context = context;
         }
+        //Return Comments index view
         public IActionResult Index()
         {
             return View();
         }
 
+        //Handles comment submissions.
+        //Validates comment content is not empty, if so it redirects with error message.
+        //On valid input, builds a new Comment using the PostId, the session username as
+        //the author, the submitted content, and a UTC timestamp, then saves it to the database.
+        //On success, redirects back to the blog post's Details page with a success message.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int PostId, string User, string UserComments)

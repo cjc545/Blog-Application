@@ -41,7 +41,7 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-
+        //This script initialises the Quilljs rich text editor.
         let quill;
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -71,18 +71,12 @@
                 quill.root.innerHTML = contentInput.value;
             }
 
-            // IMPORTANT: attach submit handler here
             const form = document.querySelector(".btn-success");
 
             form.addEventListener("click", function (e) {
 
                 const html = quill.root.innerHTML;
                 document.getElementById("contentInput").value = html;
-
-                // if(quill.getText().trim().length === 0){
-                //     e.preventDefault();
-                //     alert("Post content cannot be empty");
-                // }
 
             });
 
@@ -147,35 +141,5 @@
                 };
             };
         }
-
-        // $('.quill').each((i, q) => {
-        //     new Quill('#editor', {
-        //         theme: 'snow',
-        //         modules: {
-        //             toolbar: {
-        //                 container: [
-        //                     [{ header: [1, 2, false] }],
-        //                     ['bold', 'italic', 'underline'],
-        //                     [{ list: 'ordered'}, { list: 'bullet'}],
-        //                     ['link', 'image'],
-        //                     ['clean']
-        //                 ],
-        //                 handlers: {
-        //                     image: imageHandler
-        //                 }
-        //             },
-        //             clipboard: true
-        //             }
-        //         });
-        //     }).on('focus', (e) => {
-        //       $(this).text($(this).text().substring($(this).text().length, -1));this is what does it
-        // });
-
-
-        // document.querySelector("form").addEventListener("submit", function () {
-        // 	var html = quill.root.innerHTML;
-        // 	document.getElementById("contentInput").value = html;
-        // });
-
     </script>
 }

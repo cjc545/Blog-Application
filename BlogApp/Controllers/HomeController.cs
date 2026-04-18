@@ -9,15 +9,14 @@ namespace BlogApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly BlogDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, BlogDbContext context)
+        //Constructor (dependancy injection)
+        public HomeController(BlogDbContext context)
         {
-            _logger = logger;
             _context = context;
         }
-
+        //Fetch all blog posts from db, return view
         public async Task<IActionResult> Index()
         {
             List<BlogPost> posts = await _context.BlogPosts
@@ -26,12 +25,14 @@ namespace BlogApp.Controllers
 
             return View(posts);
         }
-
+        //Returns Privacy view.
         public IActionResult Privacy()
         {
             return View();
         }
-
+        //Returns the Error view populated with the current request's trace ID.
+        //The trace ID is taken from the active diagnostic activity if available,
+        //falling back to ASP.NET Core's own HttpContext identifier.
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
