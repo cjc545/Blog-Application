@@ -68,6 +68,66 @@ When a user logs in, the password is hashed, and the hash is compared to the db 
 
 The are checks in place so only one account is given per email.
 
+## Testing
+
+For testing, I've created unit tests for all of the controller files/logic to make sure logic works as expected.
+
+| Test Name									   | Description																		| Controller		 |
+|----------------------------------------------|------------------------------------------------------------------------------------|--------------------|
+| `Index_UnauthenticatedUser_RedirectsToLogin` | Unauthenticated users requesting the post list are redirected to the Login action. | BlogPostController |
+| `Index_AuthenticatedUser_ReturnsViewWithPosts` | Authenticated users receive a view containing all posts, ordered newest first by ID. | BlogPostController |
+| `Create_Get_UnauthenticatedUser_RedirectsToLogin` | GET Create redirects unauthenticated users to the Login action. | BlogPostController |
+| `Create_Get_AuthenticatedUser_ReturnsView` | GET Create returns the create view for authenticated users. | BlogPostController |
+| `Create_Post_EmptyContent_ReturnsViewWithError` | Submitting a post with empty Quill content returns the view with an error in TempData. | BlogPostController |
+| `Create_Post_ContentTooShort_ReturnsViewWithError` | Submitting a post with fewer than 10 visible characters returns the view with an error. | BlogPostController |
+| `Create_Post_ValidContent_SavesAndRedirectsToIndex` | A valid post is saved to the database and the user is redirected to Index. | BlogPostController |
+| `Details_UnauthenticatedUser_RedirectsToLogin` | Unauthenticated users requesting a post's details are redirected to Login. | BlogPostController |
+| `Details_NonExistentPost_ReturnsNotFound` | Requesting details for an ID that doesn't exist in the database returns a 404. | BlogPostController |
+| `Details_ExistingPost_ReturnsViewWithPost` | Requesting details for a valid post ID returns the view with the correct post model. | BlogPostController |
+| `Edit_Get_NonOwner_RedirectsToIndexWithError` | A user who doesn't own the post is redirected to Index with an error in TempData. | BlogPostController |
+| `Edit_Get_Owner_ReturnsView` | The post owner can access the Edit view. | BlogPostController |
+| `Edit_Post_MismatchedIds_ReturnsNotFound` | If the route ID doesn't match the submitted model ID, a 404 is returned. | BlogPostController |
+| `Edit_Post_ValidUpdate_SavesAndRedirects` | A valid edit updates the post's fields in the database and redirects to Index. | BlogPostController |
+| `Delete_Get_NonOwner_RedirectsToIndexWithError` | A non-owner trying to access the Delete view is redirected with an error. | BlogPostController |
+| `Delete_Get_Owner_ReturnsView` | The post owner can access the Delete confirmation view. | BlogPostController |
+| `DeleteConfirmed_ExistingPost_RemovesFromDbAndRedirects` | Confirming deletion removes the post from the database and redirects to Index. | BlogPostController |
+| `Register_Get_ReturnsView` | GET Register returns the registration view. | AccountController |
+| `Register_Post_InvalidModelState_ReturnsViewWithModel` | An invalid model state returns the view with the submitted model. | AccountController |
+| `Register_Post_DuplicateEmail_ReturnsViewWithModelError` | Registering with an already-used email adds a field-level error on "Email". | AccountController |
+| `Register_Post_ValidNewUser_SavesUserToDatabase` | A valid registration saves the user with a hashed (not plain-text) password. | AccountController |
+| `Register_Post_ValidNewUser_SetsSessionAndRedirectsToHome` | After registration, UserEmail and UserName are written to session and the user is redirected to Home. | AccountController |
+| `Login_Get_ReturnsView` | GET Login returns the login view. | AccountController |
+| `Login_Post_InvalidModelState_ReturnsViewWithModel` | An invalid model state on login returns the view with the submitted model. | AccountController |
+| `Login_Post_UnknownEmail_ReturnsViewWithGenericError` | An unrecognised email returns a generic error that doesn't reveal whether the email exists. | AccountController |
+| `Login_Post_WrongPassword_ReturnsViewWithGenericError` | A correct email but wrong password returns the same generic error as an unknown email. | AccountController |
+| `Login_Post_CorrectCredentials_SetsSessionAndRedirectsToHome` | Valid credentials write UserEmail and UserName to session and redirect to Home. | AccountController |
+| `LogOut_ClearsSessionAndRedirectsToHome` | Logging out calls Session.Clear() and redirects to Home. | AccountController |
+| `Index_ReturnsView` | GET Index returns the comments index view. | CommentsController |
+| `Create_EmptyComment_RedirectsToPostDetailsWithError` | An empty comment sets an error in TempData and redirects to Post/Details without saving. | CommentsController |
+| `Create_WhitespaceOnlyComment_RedirectsToPostDetailsWithError` | A whitespace-only comment is treated as empty and redirected with an error. | CommentsController |
+| `Create_NullComment_RedirectsToPostDetailsWithError` | A null comment value is treated as empty and redirected with an error. | CommentsController |
+| `Create_ValidComment_SavesCommentToDatabase` | A valid comment is saved to the database with the correct PostId and content. | CommentsController |
+| `Create_ValidComment_AuthorIsSetFromSession_NotFormInput` | The comment author is taken from the session, not the form's User parameter, preventing spoofing. | CommentsController |
+| `Create_ValidComment_TimestampIsSetToUtcNow` | The CreateAt timestamp on the saved comment falls within the window of when the test ran. | CommentsController |
+| `Create_ValidComment_RedirectsToBlogPostDetailsWithSuccess` | A successful comment sets a success message in TempData and redirects to BlogPost/Details. | CommentsController |
+| `Create_ValidComment_MultipleComments_AllSavedToCorrectPosts` | Multiple comments posted to different posts are each correctly associated with their post. | CommentsController |
+| `Index_EmptyDatabase_ReturnsViewWithEmptyList` | When no posts exist, the home page returns a view with an empty list. | HomeController |
+| `Index_WithPosts_ReturnsViewWithAllPosts` | All posts in the database are returned to the view. | HomeController |
+| `Index_PostsIncludeUserData` | The User navigation property is eagerly loaded so author names are available in the view. | HomeController |
+| `Privacy_ReturnsView` | GET Privacy returns the privacy view. | HomeController |
+| `Error_ReturnsViewWithRequestId` | The Error view is populated with the RequestId taken from HttpContext.TraceIdentifier. | HomeController |
+| `Error_RequestId_IsNeverNullOrEmpty` | The RequestId on the ErrorViewModel is always a non-empty string. | HomeController |
+| `Upload_NullFile_ReturnsBadRequest` | Uploading a null file returns a 400 Bad Request. | ImageController |
+| `Upload_EmptyFile_ReturnsBadRequest` | Uploading a zero-byte file returns a 400 Bad Request. | ImageController |
+| `Upload_ValidFile_ReturnsUrlPath` | A successful upload returns a content result containing the URL path to the file. | ImageController |
+| `Upload_ValidFile_ReturnedPathEndsWithOriginalExtension` | The returned URL preserves the original file extension. | ImageController |
+| `Upload_ValidFile_ReturnedFilenameIsNotOriginalFilename` | The saved filename is GUID-based and does not contain the user-supplied filename. | ImageController |
+| `Upload_ValidFile_FileIsWrittenToDisk` | After upload, the file physically exists on disk at the expected path. | ImageController |
+| `Upload_ValidFile_CreatesUploadsFolderIfMissing` | The wwwroot/uploads directory is created automatically if it doesn't already exist. | ImageController |
+| `Upload_ValidFile_UploadsFolderAlreadyExists_DoesNotThrow` | Uploading when the uploads directory already exists completes without throwing an exception. | ImageController |
+| `Upload_TwoFilesWithSameName_BothSavedWithDifferentFilenames` | Two files with identical original names are each saved with unique GUID-based filenames. | ImageController |
+| `Upload_ValidFile_PreservesFileExtensionCaseInsensitive` | Uppercase extensions such as .JPG are preserved exactly as supplied. | ImageController |
+
 
 ## Dependencies
 
@@ -81,6 +141,9 @@ This application does use a few NuGet packages, these include:
 
 For the text-box functionality, I used QuillJS
 
-Notes:
-https://www.youtube.com/watch?v=5lY1BhPjjDg
-https://www.youtube.com/watch?v=IBMECNBRcrU
+For the testing project, I use the following nuget packages:
+- Microsoft.EntityFrameworkCore.InMemory 9.0.13
+- Microsoft.NET.Test.Sdk 17.14.1
+- Moq 4.20.72
+- Xunit.v3 3.2.2
+
