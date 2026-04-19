@@ -147,3 +147,5 @@ For the testing project, I use the following nuget packages:
 - Moq 4.20.72
 - Xunit.v3 3.2.2
 
+The Bootstrap.css theme is BOOTSTRA.386, created by kristopolus (https://github.com/kristopolous/BOOTSTRA.386)
+
